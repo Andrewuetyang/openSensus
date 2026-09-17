@@ -23,6 +23,10 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_PASSWORD: postgres
+          # The conformance suite connects to the database in
+          # SENSUS_TEST_DATABASE_URL without creating it, so it has to exist.
+          # The end-to-end suite creates its own from the maintenance database.
+          POSTGRES_DB: sensus_test
         ports:
           - 5432:5432
         options: >-
@@ -33,7 +37,8 @@ jobs:
 
     env:
       # Without these the two PostgreSQL suites skip themselves, so CI would
-      # silently stop covering the second backend.
+      # silently stop covering the second backend. The step below fails if that
+      # happens anyway.
       SENSUS_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/sensus_test
       SENSUS_TEST_DATABASE_URL_E2E: postgres://postgres:postgres@127.0.0.1:5432/sensus_e2e_test
 
@@ -54,15 +59,15 @@ jobs:
         run: npm run check:lockfile
 
       - name: Build and test
-        run: npm test
-
-      - name: Confirm the PostgreSQL suites were not skipped
         run: |
           set -o pipefail
-          node --test --test-reporter=tap \
-            dist/test/storage-postgres.test.js dist/test/postgres-e2e.test.js \
-            | tee /tmp/pg.tap
-          if grep -q "^ *not ok.*# SKIP\|# SKIP" /tmp/pg.tap; then
-            echo "::error::A PostgreSQL suite skipped even though a database was configured."
+          npm test 2>&1 | tee /tmp/test.tap
+
+      - name: Fail if a suite skipped while a database was configured
+        run: |
+          # A skip here means a backend quietly stopped being covered.
+          if grep -q "# SKIP" /tmp/test.tap; then
+            echo "::error::A suite skipped even though PostgreSQL was configured:"
+            grep "# SKIP" /tmp/test.tap
             exit 1
           fi
