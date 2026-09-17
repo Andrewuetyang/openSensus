@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Local databases and runtime data
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Scratch and temporary files
+tmp/
+.tmp-*/
+*.log
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store

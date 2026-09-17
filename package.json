@@ -1,0 +1,56 @@
+{
+  "name": "openSensus",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A perception and attention layer for AI agents: append-only Observations in, permission-filtered world views and evidence-backed Signals out",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai-agents",
+    "observability",
+    "event-sourcing",
+    "projection",
+    "signal-detection"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Andrewuetyang/openSensus.git"
+  },
+  "homepage": "https://github.com/Andrewuetyang/openSensus#readme",
+  "bugs": {
+    "url": "https://github.com/Andrewuetyang/openSensus/issues"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/http.ts",
+    "start": "node dist/src/http.js",
+    "mcp": "node dist/src/mcp.js",
+    "mcp:dev": "tsx src/mcp.ts",
+    "mcp:http": "node dist/src/mcp-http.js",
+    "mcp:http:dev": "tsx src/mcp-http.ts",
+    "seed": "tsx examples/seed.ts",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "check:lockfile": "node scripts/check-lockfile-registry.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.0.0",
+    "better-sqlite3": "^13.0.3",
+    "jose": "^6.2.12",
+    "pg": "^8.23.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.0.0",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.5.1",
+    "@types/pg": "^8.23.1",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  }
+}
